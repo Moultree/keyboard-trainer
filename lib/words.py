@@ -19,7 +19,7 @@ class WordList:
 
         if len(to_sample) < words_amount:
             self.get_json()
-            self.sample(words_amount, threshold)
+            return self.sample(words_amount, threshold)
 
         sampled = random.sample(to_sample, words_amount)
 
