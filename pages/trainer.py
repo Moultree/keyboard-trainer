@@ -64,7 +64,7 @@ class Trainer(Base):
             with ui.row().classes("toggles"):
                 ui.button(
                     "RESTART",
-                    on_click=self.update(
+                    on_click=lambda: self.update(
                         self.game.words_amount, self.game.difficulty),
                 ).classes("btn restart")
                 ui.toggle(
