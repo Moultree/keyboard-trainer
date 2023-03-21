@@ -5,7 +5,7 @@ from .base import Base
 
 @ui.page("/")
 class Home(Base):
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
 
         with self.base:

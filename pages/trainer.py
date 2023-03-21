@@ -1,7 +1,6 @@
 from string import ascii_lowercase
 
 from nicegui import ui
-from nicegui.events import KeyEventArguments
 
 from lib.game import Game
 
@@ -10,7 +9,7 @@ from .base import Base
 
 @ui.page("/trainer")
 class Trainer(Base):
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
         ui.keyboard(on_key=self.handle_input)
 
@@ -23,7 +22,7 @@ class Trainer(Base):
 
         self.build_ui()
 
-    def update(self, words_amount: int, difficulty: str):
+    def update(self, words_amount, difficulty):
         self.index = 0
         self.letters = []
 
@@ -92,7 +91,7 @@ class Trainer(Base):
 
                 self.build_buttons(wrapper)
 
-    def handle_input(self, event: KeyEventArguments):
+    def handle_input(self, event):
         words_string = " ".join(self.game.words)
         if self.index == len(words_string):
             return

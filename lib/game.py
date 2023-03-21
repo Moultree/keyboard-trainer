@@ -2,7 +2,7 @@ from lib.words import WordList
 
 
 class Stats:
-    def __init__(self, words_amount: int) -> None:
+    def __init__(self, words_amount):
         self.words_amount = words_amount
         self.words_printed = 0
 
@@ -19,7 +19,7 @@ class Stats:
 
 
 class Game:
-    def __init__(self, words_amount: int = 20, difficulty: str = "easy") -> None:
+    def __init__(self, words_amount=20, difficulty="easy"):
         self.words_amount = words_amount
         self.difficulty = difficulty
 
@@ -28,7 +28,7 @@ class Game:
             self.words_amount, self.difficulty)
         self.stats = Stats(self.words_amount)
 
-    def new(self, words_amount: int, difficulty: str):
+    def new(self, words_amount, difficulty):
         self.words_amount = words_amount
         self.difficulty = difficulty
 
