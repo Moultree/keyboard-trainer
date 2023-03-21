@@ -1,0 +1,157 @@
+@import url("font/stylesheet.css");
+
+* {
+    font-family: "GT Walsheim Pro";
+}
+
+#1 {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background-color: #232120 !important;
+    color: white;
+    height: 100%;
+}
+
+.q-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.main {
+    min-height: 720px;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center;
+}
+
+.row {
+    flex-direction: row !important;
+    flex-wrap: nowrap;
+    align-items: center !important;
+}
+
+.name {
+    font-size: 36px;
+    font-weight: 600;
+    width: max-content;
+    white-space: nowrap;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+}
+
+.btn {
+    background: none;
+    background-color: rgba(0, 0, 0, 0) !important;
+    border: 2px solid #8A7A73;
+    border-radius: 4px;
+    text-transform: none;
+
+    font-size: 18px;
+}
+
+.restart {
+    height: min-content !important;
+}
+
+.restart {
+    font-size: 14px;
+    box-shadow: 0 1px 5px #0003, 0 2px 2px #00000024, 0 3px 1px -2px #0000001f;
+}
+
+.trainer-main {
+    min-height: 480px;
+    height: 100% !important;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between !important;
+}
+
+.text-wrapper {
+    max-width: 100%;
+    display: flex;
+    width: 100%;
+}
+
+.words {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.word {
+    display: flex;
+    flex-direction: row;
+    animation: fadein 800ms forwards;
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.letter {
+    color: white;
+    font-size: 32px;
+    opacity: 0.4;
+    transition: 400ms;
+    text-decoration: none;
+    white-space: pre;
+    user-select: none;
+}
+
+.good {
+    animation: none;
+    opacity: 100%;
+}
+
+.bad {
+    animation: none;
+    opacity: 0.8;
+    color: rgb(255, 0, 0);
+}
+
+.toggles {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.navbar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar div div {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.toggle .bg-primary {
+    background-color: rgba(0, 0, 0, 0) !important;
+    outline: 2px solid #8A7A73 !important;
+}
+
+.active {
+    text-decoration: underline;
+}
