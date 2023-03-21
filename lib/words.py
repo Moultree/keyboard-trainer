@@ -16,9 +16,13 @@ class WordList:
         self.words = [item["word"] for item in response.json()["data"]]
 
     def sample(self, words_amount: int, threshold: callable) -> list[str]:
-        sampled = random.sample(
-            [word for word in self.words if threshold(word)], words_amount
-        )
+        to_sample = [word for word in self.words if threshold(word)]
+
+        if len(to_sample) < words_amount:
+            self.get_json()
+            return self.sample(words_amount, threshold)
+
+        sampled = random.sample(to_sample, words_amount)
 
         for word in sampled:
             self.words.remove(word)
