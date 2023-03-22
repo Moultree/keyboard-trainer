@@ -67,20 +67,21 @@ class Trainer(Base):
                     on_click=lambda: self.update(
                         self.game.words_amount, self.game.difficulty),
                 ).classes("btn restart")
-                ui.toggle(
-                    [10, 25, 50, 75, 100],
-                    value=self.game.words_amount,
-                    on_change=lambda value: self.update(
-                        value.value, self.game.difficulty
-                    ),
-                ).classes("toggle")
-                ui.toggle(
-                    ["Easy", "Medium", "Hard"],
-                    value=self.game.difficulty.title(),
-                    on_change=lambda value: self.update(
-                        self.game.words_amount, value.value.lower()
-                    ),
-                ).classes("toggle")
+                with ui.row():
+                    ui.toggle(
+                        [10, 25, 50, 75, 100],
+                        value=self.game.words_amount,
+                        on_change=lambda value: self.update(
+                            value.value, self.game.difficulty
+                        ),
+                    ).classes("toggle")
+                    ui.toggle(
+                        ["Easy", "Medium", "Hard"],
+                        value=self.game.difficulty.title(),
+                        on_change=lambda value: self.update(
+                            self.game.words_amount, value.value.lower()
+                        ),
+                    ).classes("toggle")
 
     def build_ui(self):
         with self.base:
