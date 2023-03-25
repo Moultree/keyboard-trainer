@@ -17,6 +17,7 @@ class Trainer(Base):
         self.words_wrapper = None
 
         self.game = Game(25)
+        self.active = True
 
         self.index = 0
         self.letters = []
@@ -24,6 +25,7 @@ class Trainer(Base):
         self.build_ui()
 
     def update(self, words_amount: int, difficulty: str):
+        self.active = True
         self.index = 0
         self.letters = []
 
@@ -33,9 +35,11 @@ class Trainer(Base):
 
     def build_words(self):
         self.words_wrapper.clear()
+        self.words_wrapper.style("filter: none;")
 
         with self.words_wrapper:
-            with ui.element("div").classes("words"):
+            self.words_container = ui.element("div").classes("words")
+            with self.words_container:
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
@@ -49,7 +53,7 @@ class Trainer(Base):
 
     def build_navbar(self, wrapper):
         with wrapper:
-            with ui.row().classes("navbar"):
+            with ui.row().classes("navbar") as navbar:
                 ui.image("/static/logo.svg").classes("logo")
                 with ui.row().classes("stats"):
                     self.words_label = ui.label(
@@ -59,9 +63,11 @@ class Trainer(Base):
                         f"{self.game.stats.accuracy:.2f}% accuracy"
                     )
 
+        return navbar
+
     def build_buttons(self, wrapper):
         with wrapper:
-            with ui.row().classes("toggles"):
+            with ui.row().classes("toggles") as toggles:
                 ui.button(
                     "RESTART",
                     on_click=lambda: self.update(
@@ -83,19 +89,22 @@ class Trainer(Base):
                         ),
                     ).classes("toggle")
 
+        return toggles
+
     def build_ui(self):
         with self.base:
             with ui.column().classes("trainer-main") as wrapper:
-                self.build_navbar(wrapper)
+                self.navbar = self.build_navbar(wrapper)
 
                 self.words_wrapper = ui.element("div").classes("text-wrapper")
                 self.build_words()
 
-                self.build_buttons(wrapper)
+                self.buttons = self.build_buttons(wrapper)
 
     def handle_input(self, event: KeyEventArguments):
         words_string = " ".join(self.game.words)
         if self.index == len(words_string):
+            self.end_game()
             return
 
         if event.action.keydown and event.key.backspace:
@@ -130,6 +139,33 @@ class Trainer(Base):
                     self.game.stats.good_clicks / self.game.stats.clicks * 100
                 )
         self.update_stat()
+
+    def end_game(self):
+        if not self.active:
+            return
+
+        with self.navbar:
+            self.navbar.clear()
+            with ui.row():
+                ui.image("/static/logo.svg").classes("logo")
+                ui.label("Your stats:").style("font-size: 36px;")
+
+        self.words_container.style("filter: blur(10px);")
+
+        with self.words_wrapper:
+            with ui.column().classes("endgame"):
+                ui.label(f"Accuracy: {self.game.stats.accuracy:.2f}%")
+                ui.label(
+                    f"Words printed: {self.game.stats.words_printed}/{self.game.stats.words_amount}")
+
+        with self.buttons:
+            self.buttons.clear()
+            ui.button(
+                "RESTART",
+                on_click=lambda: ui.open("/trainer")
+            ).classes("btn restart")
+
+        self.active = False
 
     def update_stat(self):
         self.accuracy_label.set_text(

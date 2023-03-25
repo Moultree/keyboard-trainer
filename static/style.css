@@ -84,6 +84,8 @@ body {
 
 .text-wrapper {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
 }
 
@@ -139,6 +141,15 @@ body {
 .toggle .bg-primary {
     background-color: rgba(0, 0, 0, 0) !important;
     outline: 2px solid #8A7A73 !important;
+}
+
+.endgame {
+    position: absolute;
+    align-self: center;
+}
+
+.endgame div {
+    font-size: 24px;
 }
 
 @keyframes fadein {
