@@ -4,11 +4,6 @@
     font-family: "GT Walsheim Pro";
 }
 
-#1 {
-    width: 100%;
-    height: 100%;
-}
-
 body {
     background-color: #232120 !important;
     color: white;
@@ -25,6 +20,7 @@ body {
 .main {
     min-height: 720px;
     max-width: 720px;
+
     display: flex;
     flex-direction: column;
     align-items: center !important;
@@ -33,14 +29,16 @@ body {
 
 .row {
     flex-direction: row !important;
-    flex-wrap: nowrap;
     align-items: center !important;
+
+    flex-wrap: nowrap;
 }
 
 .name {
+    width: max-content;
+
     font-size: 36px;
     font-weight: 600;
-    width: max-content;
     white-space: nowrap;
 }
 
@@ -49,8 +47,18 @@ body {
     height: 48px;
 }
 
+.navbar {
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar div div {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
 .btn {
-    background: none;
     background-color: rgba(0, 0, 0, 0) !important;
     border: 2px solid #8A7A73;
     border-radius: 4px;
@@ -61,25 +69,23 @@ body {
 
 .restart {
     height: min-content !important;
-}
 
-.restart {
     font-size: 14px;
     box-shadow: 0 1px 5px #0003, 0 2px 2px #00000024, 0 3px 1px -2px #0000001f;
 }
 
 .trainer-main {
-    min-height: 480px;
+    width: 100%;
+    min-height: 360px;
     height: 100% !important;
-    padding: 0;
     display: flex;
-    flex-direction: column;
     justify-content: space-between !important;
 }
 
 .text-wrapper {
-    max-width: 100%;
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
 }
 
@@ -96,16 +102,6 @@ body {
     animation: fadein 800ms forwards;
 }
 
-@keyframes fadein {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
 .letter {
     color: white;
     font-size: 32px;
@@ -115,6 +111,8 @@ body {
     white-space: pre;
     user-select: none;
 }
+
+/* Letter states */
 
 .good {
     animation: none;
@@ -127,24 +125,17 @@ body {
     color: rgb(255, 0, 0);
 }
 
+.active {
+    text-decoration: underline;
+}
+
+
 .toggles {
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-
-.navbar {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-}
-
-.navbar div div {
-    font-size: 18px;
-    opacity: 0.8;
 }
 
 .toggle .bg-primary {
@@ -152,6 +143,21 @@ body {
     outline: 2px solid #8A7A73 !important;
 }
 
-.active {
-    text-decoration: underline;
+.endgame {
+    position: absolute;
+    align-self: center;
+}
+
+.endgame div {
+    font-size: 24px;
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
