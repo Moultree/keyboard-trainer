@@ -16,6 +16,7 @@ class Trainer(Base):
         self.words_wrapper = None
 
         self.game = Game(25)
+        self.active = True
 
         self.index = 0
         self.letters = []
@@ -23,6 +24,7 @@ class Trainer(Base):
         self.build_ui()
 
     def update(self, words_amount, difficulty):
+        self.active = True
         self.index = 0
         self.letters = []
 
@@ -32,9 +34,11 @@ class Trainer(Base):
 
     def build_words(self):
         self.words_wrapper.clear()
+        self.words_wrapper.style("filter: none;")
 
         with self.words_wrapper:
-            with ui.element("div").classes("words"):
+            self.words_container = ui.element("div").classes("words")
+            with self.words_container:
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
@@ -48,52 +52,60 @@ class Trainer(Base):
 
     def build_navbar(self, wrapper):
         with wrapper:
-            with ui.row().classes("navbar"):
+            with ui.row().classes("navbar") as navbar:
                 ui.image("/static/logo.svg").classes("logo")
                 with ui.row().classes("stats"):
                     self.words_label = ui.label(
-                        f"{self.game.stats.words_printed}/{self.game.stats.words_amount} words"
+                        f"{self.game.stats.words_printed}"
+                        "/"
+                        f"{self.game.stats.words_amount} words"
                     )
                     self.accuracy_label = ui.label(
                         f"{self.game.stats.accuracy:.2f}% accuracy"
                     )
 
+        return navbar
+
     def build_buttons(self, wrapper):
         with wrapper:
-            with ui.row().classes("toggles"):
+            with ui.row().classes("toggles") as toggles:
                 ui.button(
                     "RESTART",
                     on_click=lambda: self.update(
                         self.game.words_amount, self.game.difficulty),
                 ).classes("btn restart")
-                ui.toggle(
-                    [10, 25, 50, 75, 100],
-                    value=self.game.words_amount,
-                    on_change=lambda value: self.update(
-                        value.value, self.game.difficulty
-                    ),
-                ).classes("toggle")
-                ui.toggle(
-                    ["Easy", "Medium", "Hard"],
-                    value=self.game.difficulty.title(),
-                    on_change=lambda value: self.update(
-                        self.game.words_amount, value.value.lower()
-                    ),
-                ).classes("toggle")
+                with ui.row():
+                    ui.toggle(
+                        [10, 25, 50, 75, 100],
+                        value=self.game.words_amount,
+                        on_change=lambda value: self.update(
+                            value.value, self.game.difficulty
+                        ),
+                    ).classes("toggle")
+                    ui.toggle(
+                        ["Easy", "Medium", "Hard"],
+                        value=self.game.difficulty.title(),
+                        on_change=lambda value: self.update(
+                            self.game.words_amount, value.value.lower()
+                        ),
+                    ).classes("toggle")
+
+        return toggles
 
     def build_ui(self):
         with self.base:
             with ui.column().classes("trainer-main") as wrapper:
-                self.build_navbar(wrapper)
+                self.navbar = self.build_navbar(wrapper)
 
                 self.words_wrapper = ui.element("div").classes("text-wrapper")
                 self.build_words()
 
-                self.build_buttons(wrapper)
+                self.buttons = self.build_buttons(wrapper)
 
     def handle_input(self, event):
         words_string = " ".join(self.game.words)
         if self.index == len(words_string):
+            self.end_game()
             return
 
         if event.action.keydown and event.key.backspace:
@@ -115,7 +127,10 @@ class Trainer(Base):
                 letter = self.letters[self.index]
 
                 if str(event.key) == gl:
-                    if str(event.key) == " " or (self.index + 1) == len(words_string):
+                    if (
+                        str(event.key) == " " or
+                        (self.index + 1) == len(words_string)
+                    ):
                         self.game.stats.words_printed += 1
                     letter.classes("good", remove="bad")
                     self.game.stats.good_clicks += 1
@@ -129,11 +144,43 @@ class Trainer(Base):
                 )
         self.update_stat()
 
+    def end_game(self):
+        if not self.active:
+            return
+
+        with self.navbar:
+            self.navbar.clear()
+            with ui.row():
+                ui.image("/static/logo.svg").classes("logo")
+                ui.label("Your stats:").style("font-size: 36px;")
+
+        self.words_container.style("filter: blur(10px);")
+
+        with self.words_wrapper:
+            with ui.column().classes("endgame"):
+                ui.label(f"Accuracy: {self.game.stats.accuracy:.2f}%")
+                ui.label(
+                    f"Words printed: {self.game.stats.words_printed}"
+                    "/"
+                    f"{self.game.stats.words_amount}"
+                )
+
+        with self.buttons:
+            self.buttons.clear()
+            ui.button(
+                "RESTART",
+                on_click=lambda: ui.open("/trainer")
+            ).classes("btn restart")
+
+        self.active = False
+
     def update_stat(self):
         self.accuracy_label.set_text(
             f"{self.game.stats.accuracy:.2f}% accuracy")
         if self.game.stats.words_printed <= self.game.words_amount:
             self.words_label.set_text(
-                f"{self.game.stats.words_printed}/{self.game.words_amount} words"
+                f"{self.game.stats.words_printed}"
+                "/"
+                f"{self.game.words_amount} words"
             )
         ui.update()
