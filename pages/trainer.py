@@ -4,7 +4,7 @@ from nicegui import ui
 from nicegui.events import KeyEventArguments
 
 from lib.game import Game
-
+import time
 from .base import Base
 
 
@@ -18,7 +18,7 @@ class Trainer(Base):
 
         self.game = Game(25)
         self.active = True
-
+        self.measure_time = 0
         self.index = 0
         self.letters = []
 
@@ -43,8 +43,7 @@ class Trainer(Base):
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
-                            self.letters.append(
-                                ui.label(letter).classes("letter"))
+                            self.letters.append(ui.label(letter).classes("letter"))
                     self.letters.append(ui.label(" ").classes("letter"))
 
         self.letters[0].classes("active")
@@ -56,8 +55,8 @@ class Trainer(Base):
             with ui.row().classes("navbar") as navbar:
                 ui.image("/static/logo.svg").classes("logo")
                 with ui.row().classes("stats"):
-                    self.words_label = ui.label(
-                        f"{self.game.stats.words_printed}/{self.game.stats.words_amount} words"
+                    self.mistakes_label = ui.label(
+                        f"{self.game.stats.bad_clicks} mistakes"
                     )
                     self.accuracy_label = ui.label(
                         f"{self.game.stats.accuracy:.2f}% accuracy"
@@ -71,7 +70,8 @@ class Trainer(Base):
                 ui.button(
                     "RESTART",
                     on_click=lambda: self.update(
-                        self.game.words_amount, self.game.difficulty),
+                        self.game.words_amount, self.game.difficulty
+                    ),
                 ).classes("btn restart")
                 with ui.row():
                     ui.toggle(
@@ -103,7 +103,9 @@ class Trainer(Base):
 
     def handle_input(self, event: KeyEventArguments):
         words_string = " ".join(self.game.words)
+
         if self.index == len(words_string):
+            self.end_time = time.time()
             self.end_game()
             return
 
@@ -120,23 +122,24 @@ class Trainer(Base):
             return
 
         if event.action.keydown:
-            self.game.stats.clicks += 1
             if self.index < len(words_string):
+                if str(event.key) == words_string[0]:
+                    self.start_time = time.time()
                 gl = words_string[self.index]
                 letter = self.letters[self.index]
 
                 if str(event.key) == gl:
                     if str(event.key) == " " or (self.index + 1) == len(words_string):
-                        self.game.stats.words_printed += 1
                     letter.classes("good", remove="bad")
                     self.game.stats.good_clicks += 1
                 else:
+                    self.game.stats.bad_clicks += 1
                     letter.classes("bad", remove="good")
                 self.index += 1
                 self.letters[self.index - 1].classes(remove="active")
                 self.letters[self.index].classes("active")
                 self.game.stats.accuracy = (
-                    self.game.stats.good_clicks / self.game.stats.clicks * 100
+                    self.game.stats.good_clicks / (self.game.stats.good_clicks + self.game.stats.bad_clicks) * 100
                 )
         self.update_stat()
 
@@ -155,23 +158,20 @@ class Trainer(Base):
         with self.words_wrapper:
             with ui.column().classes("endgame"):
                 ui.label(f"Accuracy: {self.game.stats.accuracy:.2f}%")
+                ui.label(f"Mistakes: {self.game.stats.bad_clicks}")
                 ui.label(
-                    f"Words printed: {self.game.stats.words_printed}/{self.game.stats.words_amount}")
+                    f"Wpm: {(self.end_time - self.start_time)/self.game.words_amount:.2f}"
+                )
 
         with self.buttons:
             self.buttons.clear()
-            ui.button(
-                "RESTART",
-                on_click=lambda: ui.open("/trainer")
-            ).classes("btn restart")
+            ui.button("RESTART", on_click=lambda: ui.open("/trainer")).classes(
+                "btn restart"
+            )
 
         self.active = False
 
     def update_stat(self):
-        self.accuracy_label.set_text(
-            f"{self.game.stats.accuracy:.2f}% accuracy")
-        if self.game.stats.words_printed <= self.game.words_amount:
-            self.words_label.set_text(
-                f"{self.game.stats.words_printed}/{self.game.words_amount} words"
-            )
+        self.accuracy_label.set_text(f"{self.game.stats.accuracy:.2f}% accuracy")
+        self.mistakes_label.set_text(f"{self.game.stats.bad_clicks} mistakes")
         ui.update()
