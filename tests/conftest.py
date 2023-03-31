@@ -2,12 +2,10 @@ import pytest
 
 from os.path import join, dirname, abspath
 import sys
-sys.path.append(abspath(join(dirname(__file__), '..')))
 
-
-if True:
-    from lib.words import WordList
-    from lib.game import Game, Stats
+sys.path.append(abspath(join(dirname(__file__), "..")))
+from lib.words import WordList
+from lib.game import Game, GameStats
 
 
 @pytest.fixture(scope="module")
@@ -19,7 +17,7 @@ def game():
 @pytest.fixture(scope="module")
 def stats():
     game = Game()
-    stats = Stats(game.words_amount)
+    stats = GameStats(game.words_amount)
     yield stats
 
 

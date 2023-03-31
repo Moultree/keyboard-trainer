@@ -18,7 +18,6 @@ class Trainer(Base):
 
         self.game = Game(25)
         self.active = True
-        self.measure_time = 0
         self.index = 0
         self.letters = []
 
@@ -103,7 +102,7 @@ class Trainer(Base):
 
     def handle_input(self, event: KeyEventArguments):
         words_string = " ".join(self.game.words)
-
+        is_started = False
         if self.index == len(words_string):
             self.end_time = time.time()
             self.end_game()
@@ -123,13 +122,13 @@ class Trainer(Base):
 
         if event.action.keydown:
             if self.index < len(words_string):
-                if str(event.key) == words_string[0]:
+                if str(event.key) == words_string[0] and not is_started:
+                    is_started = True
                     self.start_time = time.time()
                 gl = words_string[self.index]
                 letter = self.letters[self.index]
 
                 if str(event.key) == gl:
-                    if str(event.key) == " " or (self.index + 1) == len(words_string):
                     letter.classes("good", remove="bad")
                     self.game.stats.good_clicks += 1
                 else:
@@ -139,7 +138,9 @@ class Trainer(Base):
                 self.letters[self.index - 1].classes(remove="active")
                 self.letters[self.index].classes("active")
                 self.game.stats.accuracy = (
-                    self.game.stats.good_clicks / (self.game.stats.good_clicks + self.game.stats.bad_clicks) * 100
+                    self.game.stats.good_clicks
+                    / (self.game.stats.good_clicks + self.game.stats.bad_clicks)
+                    * 100
                 )
         self.update_stat()
 
@@ -160,7 +161,7 @@ class Trainer(Base):
                 ui.label(f"Accuracy: {self.game.stats.accuracy:.2f}%")
                 ui.label(f"Mistakes: {self.game.stats.bad_clicks}")
                 ui.label(
-                    f"Wpm: {(self.end_time - self.start_time)/self.game.words_amount:.2f}"
+                    f"Wpm: {self.game.words_amount/((self.end_time - self.start_time)/60):.2f}"
                 )
 
         with self.buttons:
