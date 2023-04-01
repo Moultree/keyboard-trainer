@@ -3,6 +3,7 @@ from string import ascii_lowercase
 from nicegui import ui
 from nicegui.events import KeyEventArguments
 from lib.game import Game
+from lib.database.db import Database
 from .base import Base
 import time
 
@@ -20,6 +21,10 @@ class Trainer(Base):
         self.measuring_time_is_started = False
         self.index = 0
         self.letters = []
+
+        self.username = ""
+        self.db = Database()
+
         self.build_ui()
 
     def update(self, words_amount: int, difficulty: str):
@@ -41,7 +46,8 @@ class Trainer(Base):
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
-                            self.letters.append(ui.label(letter).classes("letter"))
+                            self.letters.append(
+                                ui.label(letter).classes("letter"))
                     self.letters.append(ui.label(" ").classes("letter"))
 
         self.letters[0].classes("active")
@@ -149,6 +155,22 @@ class Trainer(Base):
                 )
         self.update_stat()
 
+    def on_username_change(self, username: str):
+        if not username:
+            return
+
+        speed = int(
+            self.game.words_amount /
+            ((self.end_time - self.start_time) / 60)
+        )
+        if not self.db.create_user(
+            username,
+            speed
+        ):
+            user = self.db.get_user(username)
+            user.update(speed)
+            ui.notify("Saved")
+
     def end_game(self):
         if not self.active:
             return
@@ -172,9 +194,11 @@ class Trainer(Base):
                 ui.input(
                     label="Enter your username",
                     placeholder="username",
-                    on_change=lambda e: self.handle_username_change(e.value),
-                    validation={"Input too long": lambda value: len(value) < 20},
-                )
+                    validation={
+                        "Input too long": lambda value: len(value) < 20},
+                ).bind_value(self, "username")
+                ui.button("Register", on_click=lambda e: self.on_username_change(
+                    self.username)).classes("btn")
 
         with self.buttons:
             self.buttons.clear()
@@ -185,6 +209,7 @@ class Trainer(Base):
         self.active = False
 
     def update_stat(self):
-        self.accuracy_label.set_text(f"{self.game.stats.accuracy:.2f}% accuracy")
+        self.accuracy_label.set_text(
+            f"{self.game.stats.accuracy:.2f}% accuracy")
         self.mistakes_label.set_text(f"{self.game.stats.bad_clicks} mistakes")
         ui.update()
