@@ -5,4 +5,4 @@ from pages.trainer import Trainer
 
 app.add_static_files("/static", "static")
 
-ui.run(title="Typing Trainer", favicon="static/logo.svg")
+ui.run(title="Typing Trainer", favicon="static/logo.svg", dark=True)

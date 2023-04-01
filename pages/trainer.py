@@ -31,6 +31,7 @@ class Trainer(Base):
         self.active = True
         self.index = 0
         self.letters = []
+        self.measuring_time_is_started = False
 
         self.game.new(words_amount, difficulty)
         self.update_stat()
@@ -131,7 +132,7 @@ class Trainer(Base):
         if event.action.keydown:
             if self.index < len(words_string):
                 if (
-                    str(event.key) == words_string[0]
+                    self.index == 1
                     and not self.measuring_time_is_started
                 ):
                     self.measuring_time_is_started = True
@@ -190,21 +191,20 @@ class Trainer(Base):
                 ui.label(
                     f"Wpm: {self.game.words_amount/((self.end_time - self.start_time)/60):.0f}"
                 )
-            with ui.column().classes("usernameinput"):
-                ui.input(
-                    label="Enter your username",
-                    placeholder="username",
-                    validation={
-                        "Input too long": lambda value: len(value) < 20},
-                ).bind_value(self, "username")
-                ui.button("Register", on_click=lambda e: self.on_username_change(
-                    self.username)).classes("btn")
 
         with self.buttons:
             self.buttons.clear()
             ui.button("RESTART", on_click=lambda: ui.open("/trainer")).classes(
                 "btn restart"
             )
+            with ui.row().classes("save"):
+                ui.input(
+                    placeholder="username",
+                    validation={
+                        "Input too long": lambda value: len(value) < 20},
+                ).bind_value(self, "username")
+                ui.button("Save", on_click=lambda: self.on_username_change(
+                    self.username)).classes("btn")
 
         self.active = False
 

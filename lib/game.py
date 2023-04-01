@@ -21,7 +21,8 @@ class Game:
         self.difficulty = difficulty
 
         self.words_provider = WordList(easy_threshold=5, medium_threshold=8)
-        self.words = self.words_provider.generate(self.words_amount, self.difficulty)
+        self.words = self.words_provider.generate(
+            self.words_amount, self.difficulty)
         self.stats = GameStats(self.words_amount)
 
     def new(self, words_amount: int, difficulty: str):
