@@ -12,5 +12,6 @@ class Home(Base):
             with ui.row():
                 ui.image("/static/logo.svg").classes("logo")
                 ui.label("Typing Trainer").classes("name")
-            ui.button("Start", on_click=lambda: ui.open(
-                "/trainer")).classes("btn")
+            ui.button("Start", on_click=lambda: ui.open("/trainer")).classes(
+                "btn start"
+            )

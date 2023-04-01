@@ -2,10 +2,9 @@ from string import ascii_lowercase
 
 from nicegui import ui
 from nicegui.events import KeyEventArguments
-
 from lib.game import Game
-import time
 from .base import Base
+import time
 
 
 @ui.page("/trainer")
@@ -18,9 +17,9 @@ class Trainer(Base):
 
         self.game = Game(25)
         self.active = True
+        self.measuring_time_is_started = False
         self.index = 0
         self.letters = []
-
         self.build_ui()
 
     def update(self, words_amount: int, difficulty: str):
@@ -72,6 +71,10 @@ class Trainer(Base):
                         self.game.words_amount, self.game.difficulty
                     ),
                 ).classes("btn restart")
+                ui.button(
+                    "PROFILE",
+                    on_click=lambda: ui.open("/profile"),
+                ).classes("btn")
                 with ui.row():
                     ui.toggle(
                         [10, 25, 50, 75, 100],
@@ -102,7 +105,6 @@ class Trainer(Base):
 
     def handle_input(self, event: KeyEventArguments):
         words_string = " ".join(self.game.words)
-        is_started = False
         if self.index == len(words_string):
             self.end_time = time.time()
             self.end_game()
@@ -122,8 +124,11 @@ class Trainer(Base):
 
         if event.action.keydown:
             if self.index < len(words_string):
-                if str(event.key) == words_string[0] and not is_started:
-                    is_started = True
+                if (
+                    str(event.key) == words_string[0]
+                    and not self.measuring_time_is_started
+                ):
+                    self.measuring_time_is_started = True
                     self.start_time = time.time()
                 gl = words_string[self.index]
                 letter = self.letters[self.index]
@@ -161,7 +166,14 @@ class Trainer(Base):
                 ui.label(f"Accuracy: {self.game.stats.accuracy:.2f}%")
                 ui.label(f"Mistakes: {self.game.stats.bad_clicks}")
                 ui.label(
-                    f"Wpm: {self.game.words_amount/((self.end_time - self.start_time)/60):.2f}"
+                    f"Wpm: {self.game.words_amount/((self.end_time - self.start_time)/60):.0f}"
+                )
+            with ui.column().classes("usernameinput"):
+                ui.input(
+                    label="Enter your username",
+                    placeholder="username",
+                    on_change=lambda e: self.handle_username_change(e.value),
+                    validation={"Input too long": lambda value: len(value) < 20},
                 )
 
         with self.buttons:

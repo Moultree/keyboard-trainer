@@ -1,25 +1,29 @@
 import random
-
-import requests
+import os
+import json
 
 
 class WordList:
     words: list[str] = []
-    _URL = "https://www.randomwordgenerator.com/json/words.json"
 
     def __init__(self, easy_threshold: int = 5, medium_threshold: int = 8) -> None:
         self.easy_threshold = easy_threshold
         self.medium_threshold = medium_threshold
 
-    def get_json(self):
-        response = requests.get(self._URL)
-        self.words = [item["word"] for item in response.json()["data"]]
+    def get_words(self):
+        filename = "words.json"
+        directory = os.path.dirname(os.path.abspath(__file__))
+        filepath = os.path.join(directory, filename)
+        with open(filepath, "r") as file:
+            data = json.load(file)
+
+        self.words = [str(item["word"]).lower() for item in data["data"]]
 
     def sample(self, words_amount: int, threshold: callable) -> list[str]:
         to_sample = [word for word in self.words if threshold(word)]
 
         if len(to_sample) < words_amount:
-            self.get_json()
+            self.get_words()
             return self.sample(words_amount, threshold)
 
         sampled = random.sample(to_sample, words_amount)
@@ -31,7 +35,7 @@ class WordList:
 
     def generate(self, words_amount: int, difficulty: str) -> list[str]:
         if not self.words:
-            self.get_json()
+            self.get_words()
 
         if words_amount <= 0 or words_amount >= len(self.words):
             raise ValueError()
@@ -50,8 +54,7 @@ class WordList:
                 )
             case "hard":
                 return self.sample(
-                    words_amount, lambda word: self.medium_threshold < len(
-                        word)
+                    words_amount, lambda word: self.medium_threshold < len(word)
                 )
             case _:
                 raise ValueError()
