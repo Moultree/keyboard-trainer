@@ -11,9 +11,10 @@ class User:
         self.speed = speed
 
     def update(self, new_speed: int):
+        self.speed = int(
+            (self.speed * self.texts_typed + new_speed) / (self.texts_typed + 1)
+        )
         self.texts_typed += 1
-        self.speed = int((self.speed + new_speed) / self.texts_typed)
-
         cursor = self.conn.cursor()
         cursor.execute(
             "UPDATE users SET texts_typed=?, speed=? WHERE name=?;",

@@ -21,10 +21,7 @@ class Trainer(Base):
         self.measuring_time_is_started = False
         self.index = 0
         self.letters = []
-
         self.username = ""
-        self.db = Database()
-
         self.build_ui()
 
     def update(self, words_amount: int, difficulty: str):
@@ -153,6 +150,7 @@ class Trainer(Base):
         self.update_stat()
 
     def show_dialog(self, username):
+        Base.username = username
         self.on_username_change(username)
         with ui.dialog().props("persistent").classes(
             "endgamedialog"
