@@ -47,8 +47,7 @@ class Trainer(Base):
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
-                            self.letters.append(
-                                ui.label(letter).classes("letter"))
+                            self.letters.append(ui.label(letter).classes("letter"))
                     self.letters.append(ui.label(" ").classes("letter"))
 
         self.letters[0].classes("active")
@@ -131,10 +130,7 @@ class Trainer(Base):
 
         if event.action.keydown:
             if self.index < len(words_string):
-                if (
-                    self.index == 1
-                    and not self.measuring_time_is_started
-                ):
+                if self.index == 1 and not self.measuring_time_is_started:
                     self.measuring_time_is_started = True
                     self.start_time = time.time()
                 gl = words_string[self.index]
@@ -160,14 +156,8 @@ class Trainer(Base):
         if not username:
             return
 
-        speed = int(
-            self.game.words_amount /
-            ((self.end_time - self.start_time) / 60)
-        )
-        if not self.db.create_user(
-            username,
-            speed
-        ):
+        speed = int(self.game.words_amount / ((self.end_time - self.start_time) / 60))
+        if not self.db.create_user(username, speed):
             user = self.db.get_user(username)
             user.update(speed)
             ui.notify("Saved")
@@ -189,7 +179,7 @@ class Trainer(Base):
                 ui.label(f"Accuracy: {self.game.stats.accuracy:.2f}%")
                 ui.label(f"Mistakes: {self.game.stats.bad_clicks}")
                 ui.label(
-                    f"Wpm: {self.game.words_amount/((self.end_time - self.start_time)/60):.0f}"
+                    f"Wpm: {int(self.game.words_amount/((self.end_time - self.start_time)/60))}"
                 )
 
         with self.buttons:
@@ -200,16 +190,15 @@ class Trainer(Base):
             with ui.row().classes("save"):
                 ui.input(
                     placeholder="username",
-                    validation={
-                        "Input too long": lambda value: len(value) < 20},
+                    validation={"Input too long": lambda value: len(value) < 20},
                 ).bind_value(self, "username")
-                ui.button("Save", on_click=lambda: self.on_username_change(
-                    self.username)).classes("btn")
+                ui.button(
+                    "Save", on_click=lambda: self.on_username_change(self.username)
+                ).classes("btn")
 
         self.active = False
 
     def update_stat(self):
-        self.accuracy_label.set_text(
-            f"{self.game.stats.accuracy:.2f}% accuracy")
+        self.accuracy_label.set_text(f"{self.game.stats.accuracy:.2f}% accuracy")
         self.mistakes_label.set_text(f"{self.game.stats.bad_clicks} mistakes")
         ui.update()

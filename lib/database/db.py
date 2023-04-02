@@ -21,7 +21,7 @@ class Database:
     def get_user(self, name: str) -> User:
         cursor = self.conn.cursor()
 
-        cursor.execute("SELECT * FROM users WHERE name=?;", (name, ))
+        cursor.execute("SELECT * FROM users WHERE name=?;", (name,))
         fetched = cursor.fetchone()
         return User(self.conn, fetched[0], fetched[1], fetched[2]) if fetched else None
 
@@ -29,18 +29,20 @@ class Database:
         cursor = self.conn.cursor()
 
         cursor.execute("SELECT * FROM users;")
-        return [User(self.conn, item[0], item[1], item[2]) for item in cursor.fetchall()]
+        return [
+            User(self.conn, item[0], item[1], item[2]) for item in cursor.fetchall()
+        ]
 
     def create_user(self, name: str, speed: int) -> User:
         if name in self.names:
             return None
 
-        user = User(self.conn, name, speed, 1)
+        user = User(self.conn, name, 1, speed)
 
         cursor = self.conn.cursor()
         cursor.execute(
             "INSERT INTO users VALUES (?, ?, ?);",
-            (user.name, user.texts_typed, user.speed)
+            (user.name, user.texts_typed, user.speed),
         )
         self.conn.commit()
         cursor.close()
@@ -48,15 +50,3 @@ class Database:
         self.names.append(user.name)
 
         return user
-
-
-"""
-page:
-    db = Database
-
-    on_gameover():
-        name = input()
-        if not db.create_user(name, speed):
-            user = db.get_user(user)
-            user.update_speed(speed)
-"""
