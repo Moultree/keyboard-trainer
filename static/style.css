@@ -112,6 +112,10 @@ body {
     user-select: none;
 }
 
+.endgamedialog {
+    font-size: 24px
+}
+
 /* Letter states */
 
 .good {

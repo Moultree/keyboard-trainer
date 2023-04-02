@@ -152,6 +152,18 @@ class Trainer(Base):
                 )
         self.update_stat()
 
+    def show_dialog(self, username):
+        self.on_username_change(username)
+        with ui.dialog().props("persistent").classes(
+            "endgamedialog"
+        ) as dialog, ui.card():
+            dialog.open()
+            ui.label("Your quiz statistics have been saved.")
+            ui.label("What would you like to do next?")
+            with ui.row():
+                ui.button("Profile", on_click=lambda: ui.open("/profile"))
+                ui.button("Continue", on_click=lambda: ui.open("/trainer"))
+
     def on_username_change(self, username: str):
         if not username:
             return
@@ -193,7 +205,7 @@ class Trainer(Base):
                     validation={"Input too long": lambda value: len(value) < 20},
                 ).bind_value(self, "username")
                 ui.button(
-                    "Save", on_click=lambda: self.on_username_change(self.username)
+                    "Save", on_click=lambda: self.show_dialog(self.username)
                 ).classes("btn")
 
         self.active = False
