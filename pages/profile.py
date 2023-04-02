@@ -1,6 +1,7 @@
 from nicegui import ui
 from .base import Base
 from lib.database.db import Database
+from matplotlib import pyplot as plt
 from .trainer import Trainer
 
 
@@ -17,3 +18,9 @@ class Profile(Base):
             ui.label(f"{self.user.name}")
             ui.label(f"{self.user.texts_typed}")
             ui.label(f"{self.user.speed}")
+
+        history = self.user.history()
+        with ui.pyplot():
+            plt.plot([
+                     text[2] for text in history], [
+                     text[1] for text in history], "-")

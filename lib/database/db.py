@@ -7,16 +7,24 @@ class Database:
         self.conn = sqlite3.connect("users.db")
 
         self.create_table()
+        self.create_history_table()
+
         self.names = [user.name for user in self.get_users()]
 
     def create_table(self):
-        cursor = self.conn.cursor()
-
-        cursor.execute(
+        self.conn.execute(
             "CREATE TABLE IF NOT EXISTS users(name text NOT NULL, texts_typed integer, speed integer);"
         )
+
         self.conn.commit()
-        cursor.close()
+
+    def create_history_table(self):
+        self.conn.execute('''CREATE TABLE IF NOT EXISTS user_history
+                (name TEXT NOT NULL,
+                 speed INTEGER NOT NULL,
+                 timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)''')
+
+        self.conn.commit()
 
     def get_user(self, name: str) -> User:
         cursor = self.conn.cursor()
@@ -43,6 +51,10 @@ class Database:
         cursor.execute(
             "INSERT INTO users VALUES (?, ?, ?);",
             (user.name, user.texts_typed, user.speed),
+        )
+        cursor.execute(
+            "INSERT INTO user_history VALUES (?, ?);",
+            (user.name, user.speed),
         )
         self.conn.commit()
         cursor.close()
