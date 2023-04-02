@@ -11,12 +11,11 @@ def test_game_difficulty(game):
 
 def test_stats_reset(stats):
     stats.accuracy = 80
-    stats.clicks = 100
+    stats.bad_clicks = 1
     stats.good_clicks = 70
     stats.reset()
-    assert stats.words_printed == 0
     assert stats.accuracy == 0
-    assert stats.clicks == 0
+    assert stats.bad_clicks == 0
     assert stats.good_clicks == 0
 
 
@@ -26,7 +25,7 @@ def test_game_new(game):
     assert isinstance(words, list)
     assert isinstance(words[0], str)
 
-    game.new(30, 'hard')
+    game.new(30, "hard")
     new_words = game.words
     new_stats = game.stats
     assert isinstance(new_words, list)
@@ -39,7 +38,7 @@ def test_game_words_provider(game):
     assert words_provider.easy_threshold == 5
     assert words_provider.medium_threshold == 8
 
-    generated_words = words_provider.generate(10, 'hard')
+    generated_words = words_provider.generate(10, "hard")
     assert isinstance(generated_words, list)
     assert len(generated_words) == 10
     assert isinstance(generated_words[0], str)
