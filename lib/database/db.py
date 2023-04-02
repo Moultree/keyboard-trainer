@@ -1,5 +1,6 @@
 import sqlite3
 from .user import User
+from datetime import datetime
 
 
 class Database:
@@ -19,10 +20,12 @@ class Database:
         self.conn.commit()
 
     def create_history_table(self):
-        self.conn.execute('''CREATE TABLE IF NOT EXISTS user_history
+        self.conn.execute(
+            """CREATE TABLE IF NOT EXISTS user_history
                 (name TEXT NOT NULL,
                  speed INTEGER NOT NULL,
-                 timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)''')
+                 timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)"""
+        )
 
         self.conn.commit()
 
@@ -46,15 +49,15 @@ class Database:
             return None
 
         user = User(self.conn, name, 1, speed)
-
+        now = datetime.now()
         cursor = self.conn.cursor()
         cursor.execute(
             "INSERT INTO users VALUES (?, ?, ?);",
             (user.name, user.texts_typed, user.speed),
         )
         cursor.execute(
-            "INSERT INTO user_history VALUES (?, ?);",
-            (user.name, user.speed),
+            "INSERT INTO user_history VALUES (?, ?,?);",
+            (user.name, user.speed, now),
         )
         self.conn.commit()
         cursor.close()

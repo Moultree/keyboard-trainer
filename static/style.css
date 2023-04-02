@@ -102,6 +102,10 @@ body {
     animation: fadein 800ms forwards;
 }
 
+.profilestats {
+    border-style: solid;
+}
+
 .letter {
     color: white;
     font-size: 32px;
@@ -112,8 +116,16 @@ body {
     user-select: none;
 }
 
-.endgamedialog {
+.dialog {
     font-size: 24px
+}
+
+.profilestats {
+    font-size: 32px;
+}
+
+.legenda {
+    font-size: 18px;
 }
 
 /* Letter states */

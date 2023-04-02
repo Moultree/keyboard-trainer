@@ -65,6 +65,16 @@ class Trainer(Base):
 
         return navbar
 
+    def on_main_profile_button(self):
+        if Base.username:
+            ui.open("/profile")
+        else:
+            with ui.dialog().props("persistent").classes("dialog") as dialog, ui.card():
+                dialog.open()
+                ui.label("Pass the test once before use profile")
+                with ui.row():
+                    ui.button("Close", on_click=dialog.close)
+
     def build_buttons(self, wrapper):
         with wrapper:
             with ui.row().classes("toggles") as toggles:
@@ -76,7 +86,7 @@ class Trainer(Base):
                 ).classes("btn restart")
                 ui.button(
                     "PROFILE",
-                    on_click=lambda: ui.open("/profile"),
+                    on_click=lambda: self.on_main_profile_button(),
                 ).classes("btn")
                 with ui.row():
                     ui.toggle(
@@ -152,9 +162,7 @@ class Trainer(Base):
     def show_dialog(self, username):
         Base.username = username
         self.on_username_change(username)
-        with ui.dialog().props("persistent").classes(
-            "endgamedialog"
-        ) as dialog, ui.card():
+        with ui.dialog().props("persistent").classes("dialog") as dialog, ui.card():
             dialog.open()
             ui.label("Your quiz statistics have been saved.")
             ui.label("What would you like to do next?")
