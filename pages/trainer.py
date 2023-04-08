@@ -22,15 +22,16 @@ class Trainer(Base):
         self.index = 0
         self.letters = []
         self.username = ""
+        self.theme = ""
         self.build_ui()
 
-    def update(self, words_amount: int, difficulty: str):
+    def update(self, words_amount: int, difficulty: str, theme: str = None):
         self.active = True
         self.index = 0
         self.letters = []
         self.measuring_time_is_started = False
 
-        self.game.new(words_amount, difficulty)
+        self.game.new(words_amount, difficulty, theme)
         self.update_stat()
         self.build_words()
 
@@ -75,6 +76,22 @@ class Trainer(Base):
                 with ui.row():
                     ui.button("Close", on_click=dialog.close)
 
+    def save_button(self, dialog):
+        self.update(self.game.words_amount, self.game.difficulty, self.theme)
+        dialog.close()
+
+    def set_theme(self):
+        with ui.dialog().classes("dialog") as dialog, ui.card():
+            dialog.open()
+            with ui.row().classes("save"):
+                ui.input(
+                    placeholder="theme",
+                    validation={"Input too long": lambda value: len(value) < 20},
+                ).bind_value(self, "theme")
+                ui.button("Save", on_click=lambda: self.save_button(dialog)).classes(
+                    "btn"
+                )
+
     def build_buttons(self, wrapper):
         with wrapper:
             with ui.row().classes("toggles") as toggles:
@@ -88,6 +105,7 @@ class Trainer(Base):
                     "PROFILE",
                     on_click=lambda: self.on_main_profile_button(),
                 ).classes("btn")
+                ui.button("THEME", on_click=lambda: self.set_theme()).classes("btn")
                 with ui.row():
                     ui.toggle(
                         [10, 25, 50, 75, 100],
