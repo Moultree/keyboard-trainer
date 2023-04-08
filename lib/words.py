@@ -3,21 +3,6 @@ import os
 import json
 from nltk.corpus import wordnet
 
-"""
-word = input("Введите слово: ")
-
-synonyms = []
-for syn in wordnet.synsets(word):
-    for lemma in syn.lemmas():
-        synonyms.append(lemma.name())
-
-synonyms = list(set(synonyms))
-
-random.shuffle(synonyms)
-
-print(synonyms[:1000])
-"""
-
 
 class WordList:
     words: list[str] = []
