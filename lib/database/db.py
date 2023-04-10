@@ -34,7 +34,8 @@ class Database:
 
         cursor.execute("SELECT * FROM users WHERE name=?;", (name,))
         fetched = cursor.fetchone()
-        return User(self.conn, fetched[0], fetched[1], fetched[2]) if fetched else None
+        return User(self.conn, fetched[0], fetched[1],
+                    fetched[2]) if fetched else None
 
     def get_users(self) -> list[User]:
         cursor = self.conn.cursor()

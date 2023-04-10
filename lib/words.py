@@ -7,7 +7,8 @@ from nltk.corpus import wordnet
 class WordList:
     words: list[str] = []
 
-    def __init__(self, easy_threshold: int = 5, medium_threshold: int = 8) -> None:
+    def __init__(self, easy_threshold: int = 5,
+                 medium_threshold: int = 8) -> None:
         self.easy_threshold = easy_threshold
         self.medium_threshold = medium_threshold
 
@@ -31,7 +32,8 @@ class WordList:
 
             self.words = [str(item["word"]).lower() for item in data["data"]]
 
-    def sample(self, words_amount: int, threshold: callable, theme: str) -> list[str]:
+    def sample(self, words_amount: int, threshold: callable,
+               theme: str) -> list[str]:
         to_sample = [word for word in self.words if threshold(word)]
         if len(to_sample) < words_amount:
             self.get_words(theme)
@@ -46,11 +48,13 @@ class WordList:
 
         return sampled
 
-    def generate(self, words_amount: int, difficulty: str, theme: str) -> list[str]:
+    def generate(self, words_amount: int, difficulty: str,
+                 theme: str) -> list[str]:
         if theme is not None:
             self.words.clear()
             self.sample(
-                words_amount, lambda word: len(word) <= self.easy_threshold, theme
+                words_amount, lambda word: len(
+                    word) <= self.easy_threshold, theme
             )
         if not self.words:
             self.get_words(theme)
@@ -58,7 +62,8 @@ class WordList:
         match difficulty:
             case "easy":
                 return self.sample(
-                    words_amount, lambda word: len(word) <= self.easy_threshold, theme
+                    words_amount, lambda word: len(
+                        word) <= self.easy_threshold, theme
                 )
             case "medium":
                 return self.sample(
@@ -70,7 +75,8 @@ class WordList:
                 )
             case "hard":
                 return self.sample(
-                    words_amount, lambda word: self.medium_threshold < len(word), theme
+                    words_amount, lambda word: self.medium_threshold < len(
+                        word), theme
                 )
             case _:
                 raise ValueError()

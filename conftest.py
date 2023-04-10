@@ -1,3 +1,7 @@
+from lib.database.user import User
+from lib.database.db import Database
+from lib.game import Game, GameStats
+from lib.words import WordList
 import pytest
 
 from os.path import join, dirname, abspath
@@ -5,10 +9,6 @@ import sys
 import sqlite3
 
 sys.path.append(abspath(join(dirname(__file__), "..")))
-from lib.words import WordList
-from lib.game import Game, GameStats
-from lib.database.db import Database
-from lib.database.user import User
 
 
 @pytest.fixture(scope="module")

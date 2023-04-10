@@ -35,4 +35,5 @@ class Profile(Base):
             with ui.row().classes("graphiclabel"):
                 ui.label("wpm history")
             with ui.pyplot():
-                plt.plot(range(len(history)), [text[1] for text in history], "-")
+                plt.plot(range(len(history)), [text[1]
+                         for text in history], "-")

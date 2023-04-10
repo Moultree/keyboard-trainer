@@ -36,4 +36,5 @@ class Game:
 
         self.stats.reset()
         self.stats.words_amount = self.words_amount
-        self.words = self.words_provider.generate(words_amount, difficulty, theme)
+        self.words = self.words_provider.generate(
+            words_amount, difficulty, theme)

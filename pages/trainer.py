@@ -45,7 +45,8 @@ class Trainer(Base):
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
-                            self.letters.append(ui.label(letter).classes("letter"))
+                            self.letters.append(
+                                ui.label(letter).classes("letter"))
                     self.letters.append(ui.label(" ").classes("letter"))
 
         self.letters[0].classes("active")
@@ -86,7 +87,8 @@ class Trainer(Base):
             with ui.row().classes("save"):
                 ui.input(
                     placeholder="theme",
-                    validation={"Input too long": lambda value: len(value) < 20},
+                    validation={
+                        "Input too long": lambda value: len(value) < 20},
                 ).bind_value(self, "theme")
                 ui.button("Save", on_click=lambda: self.save_button(dialog)).classes(
                     "btn"
@@ -105,7 +107,9 @@ class Trainer(Base):
                     "PROFILE",
                     on_click=lambda: self.on_main_profile_button(),
                 ).classes("btn")
-                ui.button("THEME", on_click=lambda: self.set_theme()).classes("btn")
+                ui.button(
+                    "THEME",
+                    on_click=lambda: self.set_theme()).classes("btn")
                 with ui.row():
                     ui.toggle(
                         [10, 25, 50, 75, 100],
@@ -192,7 +196,8 @@ class Trainer(Base):
         if not username:
             return
 
-        speed = int(self.game.words_amount / ((self.end_time - self.start_time) / 60))
+        speed = int(self.game.words_amount /
+                    ((self.end_time - self.start_time) / 60))
         if not self.db.create_user(username, speed):
             user = self.db.get_user(username)
             user.update(speed)
@@ -226,7 +231,8 @@ class Trainer(Base):
             with ui.row().classes("save"):
                 ui.input(
                     placeholder="username",
-                    validation={"Input too long": lambda value: len(value) < 20},
+                    validation={
+                        "Input too long": lambda value: len(value) < 20},
                 ).bind_value(self, "username")
                 ui.button(
                     "Save", on_click=lambda: self.show_dialog(self.username)
@@ -235,6 +241,7 @@ class Trainer(Base):
         self.active = False
 
     def update_stat(self):
-        self.accuracy_label.set_text(f"{self.game.stats.accuracy:.2f}% accuracy")
+        self.accuracy_label.set_text(
+            f"{self.game.stats.accuracy:.2f}% accuracy")
         self.mistakes_label.set_text(f"{self.game.stats.bad_clicks} mistakes")
         ui.update()
