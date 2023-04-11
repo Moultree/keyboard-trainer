@@ -131,12 +131,12 @@ body {
 /* Letter states */
 
 .good {
-    animation: none;
+    animation: fadein 800ms forwards;
     opacity: 100%;
 }
 
 .bad {
-    animation: none;
+    animation: fadein 800ms forwards;
     opacity: 0.8;
     color: rgb(255, 0, 0);
 }
