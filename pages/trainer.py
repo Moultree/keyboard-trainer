@@ -13,7 +13,7 @@ class Trainer(Base):
     def __init__(self) -> None:
         super().__init__()
         ui.keyboard(on_key=self.handle_input)
-
+        # схуяли ваще не так ui.keyboard(on_key=self.handle_input())
         self.words_wrapper = None
 
         self.game = Game(25)
@@ -45,8 +45,7 @@ class Trainer(Base):
                 for word in self.game.words:
                     with ui.element("div").classes("word"):
                         for letter in word.lower():
-                            self.letters.append(
-                                ui.label(letter).classes("letter"))
+                            self.letters.append(ui.label(letter).classes("letter"))
                     self.letters.append(ui.label(" ").classes("letter"))
 
         self.letters[0].classes("active")
@@ -87,8 +86,7 @@ class Trainer(Base):
             with ui.row().classes("save"):
                 ui.input(
                     placeholder="theme",
-                    validation={
-                        "Input too long": lambda value: len(value) < 20},
+                    validation={"Input too long": lambda value: len(value) < 20},
                 ).bind_value(self, "theme")
                 ui.button("Save", on_click=lambda: self.save_button(dialog)).classes(
                     "btn"
@@ -107,9 +105,7 @@ class Trainer(Base):
                     "PROFILE",
                     on_click=lambda: self.on_main_profile_button(),
                 ).classes("btn")
-                ui.button(
-                    "THEME",
-                    on_click=lambda: self.set_theme()).classes("btn")
+                ui.button("THEME", on_click=lambda: self.set_theme()).classes("btn")
                 with ui.row():
                     ui.toggle(
                         [10, 25, 50, 75, 100],
@@ -125,7 +121,20 @@ class Trainer(Base):
                             self.game.words_amount, value.value.lower()
                         ),
                     ).classes("toggle")
-
+        first_row = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "backspace"]
+        second_row = ["a", "s", "d", "f", "g", "h", "j", "k", "l"]
+        third_row = ["z", "x", "c", "v", "b", "n", "m"]
+        with ui.row().classes("keyboard"):
+            for t in first_row:
+                ui.button(t, on_click=lambda _, t=t: self.helper(t))
+        with ui.row().classes("keyboard"):
+            for t in second_row:
+                ui.button(t, on_click=lambda _, t=t: self.helper(t))
+        with ui.row().classes("keyboard"):
+            for t in third_row:
+                ui.button(t, on_click=lambda _, t=t: self.helper(t))
+        with ui.row().classes("space-button"):
+            ui.button(" ", on_click=lambda: self.helper(" "))
         return toggles
 
     def build_ui(self):
@@ -138,14 +147,20 @@ class Trainer(Base):
 
                 self.buttons = self.build_buttons(wrapper)
 
-    def handle_input(self, event: KeyEventArguments):
+    def handle_input(self, event):
+        if event.action.keydown:
+            key = event.key
+            self.helper(key)
+
+    def helper(self, key):
+        print(key)
         words_string = " ".join(self.game.words)
         if self.index == len(words_string):
             self.end_time = time.time()
             self.end_game()
             return
 
-        if event.action.keydown and event.key.backspace:
+        if str(key) == "backspace":
             if self.index > 0 and words_string[self.index - 1] != " ":
                 self.letters[self.index].classes(remove="bad good")
                 self.index -= 1
@@ -154,10 +169,10 @@ class Trainer(Base):
                 self.letters[self.index].classes("active")
                 return
 
-        if str(event.key) not in (ascii_lowercase + " "):
+        if str(key) not in (ascii_lowercase + " "):
             return
 
-        if event.action.keydown:
+        if True:
             if self.index < len(words_string):
                 if self.index == 1 and not self.measuring_time_is_started:
                     self.measuring_time_is_started = True
@@ -165,7 +180,7 @@ class Trainer(Base):
                 gl = words_string[self.index]
                 letter = self.letters[self.index]
 
-                if str(event.key) == gl:
+                if str(key) == gl:
                     letter.classes("good", remove="bad")
                     self.game.stats.good_clicks += 1
                 else:
@@ -196,8 +211,7 @@ class Trainer(Base):
         if not username:
             return
 
-        speed = int(self.game.words_amount /
-                    ((self.end_time - self.start_time) / 60))
+        speed = int(self.game.words_amount / ((self.end_time - self.start_time) / 60))
         if not self.db.create_user(username, speed):
             user = self.db.get_user(username)
             user.update(speed)
@@ -231,8 +245,7 @@ class Trainer(Base):
             with ui.row().classes("save"):
                 ui.input(
                     placeholder="username",
-                    validation={
-                        "Input too long": lambda value: len(value) < 20},
+                    validation={"Input too long": lambda value: len(value) < 20},
                 ).bind_value(self, "username")
                 ui.button(
                     "Save", on_click=lambda: self.show_dialog(self.username)
@@ -241,7 +254,6 @@ class Trainer(Base):
         self.active = False
 
     def update_stat(self):
-        self.accuracy_label.set_text(
-            f"{self.game.stats.accuracy:.2f}% accuracy")
+        self.accuracy_label.set_text(f"{self.game.stats.accuracy:.2f}% accuracy")
         self.mistakes_label.set_text(f"{self.game.stats.bad_clicks} mistakes")
         ui.update()
