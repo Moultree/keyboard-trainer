@@ -10,9 +10,7 @@ class Base:
         ui.add_head_html("<link rel='stylesheet' href='/static/style.css' />")
 
         audio = ui.audio(
-            "/static/escape-plan.mp3",
-            controls=False,
-            autoplay=True)
-        audio._props["loop"] = True
+            "/static/escape-plan.mp3", controls=False, autoplay=True, loop=True
+        )
         self.base = ui.column().classes("main")
         self.db = Database()
