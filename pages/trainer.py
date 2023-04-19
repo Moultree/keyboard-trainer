@@ -13,7 +13,7 @@ class Trainer(Base):
     def __init__(self) -> None:
         super().__init__()
         ui.keyboard(on_key=self.handle_input)
-        # схуяли ваще не так ui.keyboard(on_key=self.handle_input())
+
         self.words_wrapper = None
 
         self.game = Game(25)
@@ -153,7 +153,6 @@ class Trainer(Base):
             self.helper(key)
 
     def helper(self, key):
-        print(key)
         words_string = " ".join(self.game.words)
         if self.index == len(words_string):
             self.end_time = time.time()
@@ -172,28 +171,27 @@ class Trainer(Base):
         if str(key) not in (ascii_lowercase + " "):
             return
 
-        if True:
-            if self.index < len(words_string):
-                if self.index == 1 and not self.measuring_time_is_started:
-                    self.measuring_time_is_started = True
-                    self.start_time = time.time()
-                gl = words_string[self.index]
-                letter = self.letters[self.index]
+        if self.index < len(words_string):
+            if self.index == 1 and not self.measuring_time_is_started:
+                self.measuring_time_is_started = True
+                self.start_time = time.time()
+            gl = words_string[self.index]
+            letter = self.letters[self.index]
 
-                if str(key) == gl:
-                    letter.classes("good", remove="bad")
-                    self.game.stats.good_clicks += 1
-                else:
-                    self.game.stats.bad_clicks += 1
-                    letter.classes("bad", remove="good")
-                self.index += 1
-                self.letters[self.index - 1].classes(remove="active")
-                self.letters[self.index].classes("active")
-                self.game.stats.accuracy = (
-                    self.game.stats.good_clicks
-                    / (self.game.stats.good_clicks + self.game.stats.bad_clicks)
-                    * 100
-                )
+            if str(key) == gl:
+                letter.classes("good", remove="bad")
+                self.game.stats.good_clicks += 1
+            else:
+                self.game.stats.bad_clicks += 1
+                letter.classes("bad", remove="good")
+            self.index += 1
+            self.letters[self.index - 1].classes(remove="active")
+            self.letters[self.index].classes("active")
+            self.game.stats.accuracy = (
+                self.game.stats.good_clicks
+                / (self.game.stats.good_clicks + self.game.stats.bad_clicks)
+                * 100
+            )
         self.update_stat()
 
     def show_dialog(self, username):
