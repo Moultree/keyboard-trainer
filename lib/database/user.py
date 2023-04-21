@@ -13,13 +13,15 @@ class User:
     def history(self):
         cursor = self.conn.cursor()
 
-        cursor.execute(
-            "SELECT * FROM user_history WHERE name=?;", (self.name,))
+        cursor.execute("SELECT * FROM user_history WHERE name=?;",
+                       (self.name,))
         return cursor.fetchall()
 
     def update(self, new_speed: int):
         self.speed = int(
-            (self.speed * self.texts_typed + new_speed) / (self.texts_typed + 1)
+            (self.speed * self.texts_typed + new_speed)
+            /
+            (self.texts_typed + 1)
         )
         self.texts_typed += 1
 
@@ -36,4 +38,8 @@ class User:
         cursor.close()
 
     def __repr__(self) -> str:
-        return f"User(name = {self.name}, texts_typed = {self.texts_typed}, speed = {self.speed})"
+        return (
+            f"User(name = {self.name},"
+            f"texts_typed = {self.texts_typed},"
+            f"speed = {self.speed})"
+        )

@@ -14,7 +14,10 @@ class Database:
 
     def create_table(self):
         self.conn.execute(
-            "CREATE TABLE IF NOT EXISTS users(name text NOT NULL, texts_typed integer, speed integer);"
+            """CREATE TABLE IF NOT EXISTS users
+                (name text NOT NULL,
+                texts_typed integer,
+                speed integer);"""
         )
 
         self.conn.commit()
@@ -34,7 +37,9 @@ class Database:
 
         cursor.execute("SELECT * FROM users WHERE name=?;", (name,))
         fetched = cursor.fetchone()
-        return User(self.conn, fetched[0], fetched[1],
+        return User(self.conn,
+                    fetched[0],
+                    fetched[1],
                     fetched[2]) if fetched else None
 
     def get_users(self) -> list[User]:
@@ -42,7 +47,10 @@ class Database:
 
         cursor.execute("SELECT * FROM users;")
         return [
-            User(self.conn, item[0], item[1], item[2]) for item in cursor.fetchall()
+            User(self.conn,
+                 item[0],
+                 item[1],
+                 item[2]) for item in cursor.fetchall()
         ]
 
     def create_user(self, name: str, speed: int) -> User:
