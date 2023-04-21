@@ -17,9 +17,7 @@ class GameStats:
 
 class Game:
     def __init__(
-        self, words_amount: int = 20,
-        difficulty: str = "easy",
-        theme: str = None
+        self, words_amount: int = 20, difficulty: str = "easy", theme: str = None
     ) -> None:
         self.words_amount = words_amount
         self.difficulty = difficulty
@@ -38,6 +36,4 @@ class Game:
 
         self.stats.reset()
         self.stats.words_amount = self.words_amount
-        self.words = self.words_provider.generate(words_amount,
-                                                  difficulty,
-                                                  theme)
+        self.words = self.words_provider.generate(words_amount, difficulty, theme)
