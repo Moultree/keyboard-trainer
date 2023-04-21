@@ -159,7 +159,7 @@ class Trainer(Base):
             self.end_game()
             return
 
-        if str(key) == "backspace":
+        if str(key).lower() == "backspace":
             if self.index > 0 and words_string[self.index - 1] != " ":
                 self.letters[self.index].classes(remove="bad good")
                 self.index -= 1
